@@ -2,6 +2,9 @@
     const authButton = document.getElementById("auth-button");
     if (authButton) authButton.addEventListener('click', authClick);
     else console.error("auth-button not found");
+
+    const logOutButton = document.getElementById("log-out-button");
+    if (logOutButton) logOutButton.addEventListener('click', logOutClick);
 });
 
 function authClick() {
@@ -48,4 +51,9 @@ function authClick() {
             window.location.reload();
         }
     });
+}
+function logOutClick() {
+    fetch('/api/auth', {
+        method: 'DELETE'
+    }).then(r => location.reload())
 }

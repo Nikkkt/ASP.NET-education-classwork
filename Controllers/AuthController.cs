@@ -91,6 +91,13 @@ namespace ASP.NET_Classwork.Controllers
                 };
             }
         }
+
+        [HttpDelete]
+        public object DoDelete()
+        {
+            HttpContext.Session.Remove("token");
+            return "Ok";
+        }
     }
 }
 

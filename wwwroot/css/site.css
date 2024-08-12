@@ -26,3 +26,25 @@ body {
     height: 130px;
     object-fit: cover;
 }
+
+.avatar, .no-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: block;
+}
+
+.avatar {
+    object-fit: cover;
+}
+
+.no-avatar {
+    background-color: burlywood;
+    font-size: x-large;
+    text-align: center;
+}
+
+.a-no-underline {
+    text-decoration: none;
+    color: black;
+}

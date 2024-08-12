@@ -1,6 +1,8 @@
 ﻿using ASP.NET_Classwork.Data;
 using ASP.NET_Classwork.Data.Entities;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using System.Globalization;
+using System.Security.Claims;
 
 namespace ASP.NET_Classwork.Middleware.SessionAuth
 {
@@ -32,7 +34,25 @@ namespace ASP.NET_Classwork.Middleware.SessionAuth
                     if (token.ExpiresAt > DateTime.Now)
                     {
                         // Зберігаємо токен у контексті
-                        context.Items.Add("token", token);
+                        // context.Items.Add("token", token);
+
+                        // Через токен знаходимо кому він виданий (користувача)
+                        if (dataContext.Users.Find(token.UserId) is User user)
+                        {
+                            // Уніфікований підхід - Claims
+                            // "переладаємо" дані з User до типових Claims
+                            System.Security.Claims.Claim[] claims = [
+                                new(ClaimTypes.Email,    user.Email), 
+                                new(ClaimTypes.Name,     user.Name), 
+                                new(ClaimTypes.Sid,      user.Id.ToString()),
+                                new(ClaimTypes.UserData, user.Avatar ?? "")
+                            ];
+
+                            // в ASP у HttpContext є властивість User, що є "власником" Claims
+                            context.User = new ClaimsPrincipal(new ClaimsIdentity(claims, nameof(SessionAuthMiddleware)));
+                            // користувач може пройти декілька авторизацій або одночасно, або одну з них
+                            // для розрізнення додається параметр authenticationType (nameof(SessionAuthMiddleware))
+                        }
                     }
                 }
             }
