@@ -4,6 +4,8 @@ using ASP.NET_Classwork.Services.KDF;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Numerics;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 
 namespace ASP.NET_Classwork.Controllers
@@ -14,11 +16,13 @@ namespace ASP.NET_Classwork.Controllers
     {
         private readonly DataContext _dataContext;
         private readonly IKdfService _kdfService;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(DataContext dataContext, IKdfService kdfService)
+        public AuthController(DataContext dataContext, IKdfService kdfService, ILogger<AuthController> logger)
         {
             _dataContext = dataContext;
             _kdfService = kdfService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -97,6 +101,22 @@ namespace ASP.NET_Classwork.Controllers
         {
             HttpContext.Session.Remove("token");
             return "Ok";
+        }
+
+        [HttpPut]
+        public async Task<object> DoPutAsync()
+        {
+            String body = await new StreamReader(Request.Body).ReadToEndAsync();
+
+            _logger.LogWarning(body);
+
+            JsonNode json = JsonSerializer.Deserialize<JsonNode>(body) ?? throw new Exception("JSON in body is invalid");
+
+            _logger.LogInformation(json["name"]?.GetValue<String>());
+            _logger.LogInformation(json["oldPassword"]?.GetValue<String>());
+            _logger.LogInformation(json["newPassword"]?.GetValue<String>());
+
+            return new { status = "OK" };
         }
     }
 }
