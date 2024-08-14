@@ -5,6 +5,9 @@
 
     const logOutButton = document.getElementById("log-out-button");
     if (logOutButton) logOutButton.addEventListener('click', logOutClick);
+
+    const profileEditButton = document.getElementById("profile-edit");
+    if (profileEditButton) profileEditButton.addEventListener('click', profileEditClick);
 });
 
 function authClick() {
@@ -56,4 +59,23 @@ function logOutClick() {
     fetch('/api/auth', {
         method: 'DELETE'
     }).then(r => location.reload())
+}
+
+function profileEditClick(e) {
+    const btn = e.target;
+    if (btn.classList.contains('bi-check2-square')) {
+        btn.classList.remove('bi-check2-square');
+        btn.classList.add('bi-pencil-square');
+    } else {
+        btn.classList.add('bi-check2-square');
+        btn.classList.remove('bi-pencil-square');
+    }
+    for (let elem of document.querySelectorAll('[profile-editable]')) {
+        if (elem.hasAttribute('contenteditable')) {
+            elem.removeAttribute('contenteditable')
+        } else {
+            elem.setAttribute('contenteditable', 'true')
+        }
+    }
+    
 }

@@ -56,7 +56,11 @@ namespace ASP.NET_Classwork.Controllers
 
         public IActionResult Profile()
         {
-            return View();
+            if (HttpContext.User.Identity?.IsAuthenticated ?? false)
+            {
+                return View();
+            }
+            return RedirectToAction(nameof(this.Index));
         }
 
         public IActionResult Privacy()
