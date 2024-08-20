@@ -98,6 +98,19 @@ function profileEditClick(e) {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(changes)
+            }).then(r => r.json()).then(j => {
+                if (j.status == "OK") {
+                    alert(j.message)
+                } else {
+                    for (let elem of document.querySelectorAll('[profile-editable]')) {
+                        elem.setAttribute('contenteditable', 'true')
+                    }
+
+                    btn.classList.add('bi-check2-square')
+                    btn.classList.remove('bi-pencil-square')
+
+                    alert(j.message)
+                }
             })
         }
     }

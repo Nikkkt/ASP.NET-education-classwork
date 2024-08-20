@@ -4,6 +4,7 @@ using ASP.NET_Classwork.Services.KDF;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Numerics;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
@@ -69,7 +70,7 @@ namespace ASP.NET_Classwork.Controllers
                     {
                         Id = Guid.NewGuid(),
                         UserId = user.Id,
-                        ExpiresAt = DateTime.Now.AddMinutes(2)
+                        ExpiresAt = DateTime.Now.AddHours(3)
                     };
 
                     _dataContext.Tokens.Add(token);
@@ -112,11 +113,129 @@ namespace ASP.NET_Classwork.Controllers
 
             JsonNode json = JsonSerializer.Deserialize<JsonNode>(body) ?? throw new Exception("JSON in body is invalid");
 
+            String? email = json["email"]?.GetValue<String>();
+            String? name = json["name"]?.GetValue<String>();
+            String? birthdate = json["birthdate"]?.GetValue<String>();
+            String? oldPassword = json["oldPassword"]?.GetValue<String>();
+            String? newPassword = json["newPassword"]?.GetValue<String>();
+
+            if (email == null &&  name == null && birthdate == null && oldPassword == null && newPassword == null)
+            {
+                return new {
+                    status = "Error",
+                    code = 400,
+                    message = "No data" 
+                };
+            }
+
+            Guid userId = Guid.Parse(HttpContext.User.Claims.First(c => c.Type == ClaimTypes.Sid).Value);
+
+            var user = _dataContext.Users.Find(userId);
+            if (user == null)
+            {
+                return new
+                {
+                    status = "Error",
+                    code = 403,
+                    message = "Forbidden"
+                };
+            }
+
+            if (email != null)
+            {
+                var emailRegex = new Regex(@"^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$");
+                if (!emailRegex.IsMatch(email))
+                {
+                    return new
+                    {
+                        status = "Error",
+                        code = 422,
+                        message = "Email match no pattern"
+                    };
+                }
+            }
+
+            DateTime? birthDateTime = null;
+            if (birthdate != null)
+            {
+                try
+                {
+                    birthDateTime = DateTime.Parse(birthdate);
+                }
+                catch 
+                {
+                    return new
+                    {
+                        status = "Error",
+                        code = 422,
+                        message = "Birthdate unparseable"
+                    };
+                }
+            }
+
+            if (oldPassword != null && newPassword != null)
+            {
+                if (_kdfService.DerivedKey(oldPassword, user.Salt) != user.Dk)
+                {
+                    return new
+                    {
+                        status = "Error",
+                        code = 400,
+                        message = "The old password does not match the new one"
+                    };
+                }
+
+                var passwordRegex = new Regex(@"^(?=.*\d)(?=.*\D)(?=.*\W).+$");
+                if (!passwordRegex.IsMatch(newPassword))
+                {
+                    return new
+                    {
+                        status = "Error",
+                        code = 422,
+                        message = "Password match no pattern"
+                    };
+                }
+            }
+            else if (oldPassword == null && newPassword == null) {}
+            else
+            {
+                return new
+                {
+                    status = "Error",
+                    code = 422,
+                    message = "One of the passwords are empty"
+                };
+            }
+
+            if (email != null)
+            {
+                user.Email = email;
+            }
+            if (name != null)
+            {
+                user.Name = name;
+            }
+            if (birthDateTime != null)
+            {
+                user.Birthdate = birthDateTime;
+            }
+            if (newPassword != null)
+            {
+                user.Dk = _kdfService.DerivedKey(newPassword, user.Salt);
+            }
+
             _logger.LogInformation(json["name"]?.GetValue<String>());
             _logger.LogInformation(json["oldPassword"]?.GetValue<String>());
-            _logger.LogInformation(json["newPassword"]?.GetValue<String>());
+            _logger.LogInformation(json["newPassword"]?.GetValue<String>()); 
 
-            return new { status = "OK" };
+            _dataContext.SaveChanges();
+
+            return new 
+            { 
+                status = "OK",
+                code = 200,
+                message = "Updated"
+            };
         }
     }
 }
