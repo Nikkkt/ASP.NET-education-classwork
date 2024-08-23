@@ -2,6 +2,7 @@ using ASP.NET_Classwork.Data;
 using ASP.NET_Classwork.Models;
 using ASP.NET_Classwork.Models.Home;
 using ASP.NET_Classwork.Models.Product;
+using ASP.NET_Classwork.Models.Shop;
 using ASP.NET_Classwork.Services.FileName;
 using ASP.NET_Classwork.Services.Hash;
 using ASP.NET_Classwork.Services.KDF;
@@ -90,6 +91,15 @@ namespace ASP.NET_Classwork.Controllers
             ViewData["password"] = _otpService.GeneratePassword();
             ViewData["fileName"] = _fileNameService.GenerateFileName(10);
             return View();
+        }
+
+        public IActionResult Shop()
+        {
+            ShopPageModel model = new() 
+            { 
+                ProductGroups = _dataContext.Groups.Where(g => g.DeleteDt == null)
+            };
+            return View(model);
         }
 
         public IActionResult SignUp()
@@ -300,7 +310,7 @@ namespace ASP.NET_Classwork.Controllers
         public IActionResult DownloadProduct([FromRoute] String id)
         {
             // id - закладена в маршрутизаторі назва, суть - ім'я файлу
-            String filename = $"./Uploads/Product/{id}";
+            String filename = $"./Uploads/Shop/{id}";
             if (System.IO.File.Exists(filename))
             {
                 var stream = new StreamReader(filename).BaseStream;

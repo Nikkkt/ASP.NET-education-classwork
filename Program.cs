@@ -4,6 +4,7 @@ using ASP.NET_Classwork.Services.FileName;
 using ASP.NET_Classwork.Services.Hash;
 using ASP.NET_Classwork.Services.KDF;
 using ASP.NET_Classwork.Services.OTP;
+using ASP.NET_Classwork.Services.Upload;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,6 +20,7 @@ builder.Services.AddControllersWithViews();
 //builder.Services.AddSingleton<IHashService, Md5HashService>();
 builder.Services.AddSingleton<IHashService, ShaHashService>();
 builder.Services.AddSingleton<IKdfService, Pbkdf1Service>();
+builder.Services.AddSingleton<IFileUploader, FileUploadService>();
 
 // Homework 2
 //builder.Services.AddSingleton<IOtpService, Otp6Service>();

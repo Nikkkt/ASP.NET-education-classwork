@@ -1,0 +1,93 @@
+﻿@model ASP.NET_Classwork.Models.Shop.ShopPageModel
+@{
+    ViewData["Title"] = "Shop";
+    bool isAuthenticated = Context.User.Identity?.IsAuthenticated ?? false;
+}
+
+<div class="text-center">
+    <h1 class="display-4">Крамниця</h1>
+</div>
+
+<div class="cards-container">
+    @foreach (var grp in Model.ProductGroups)
+    {
+        @Html.DisplayFor(m => grp, "ProductGroup")
+    }
+</div>
+
+@if (isAuthenticated)
+{
+    <hr/>
+    <form enctype="multipart/form-data" method="post" id="shop-group-form">
+        <div class="row">
+            <div class="col col-6">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="name-addon"><i class="bi bi-body-text"></i></span>
+                    <input name="group-name" type="text" class="form-control" placeholder="Назва товару" aria-label="Назва товару" aria-describedby="name-addon">
+                </div>
+            </div>
+            <div class="col col-6">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="description-addon"><i class="bi bi-person-vcard"></i></span>
+                    <textarea name="group-description" type="text" class="form-control" placeholder="Опис" aria-label="Опис" aria-describedby="description-addon"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col col-6">
+                <div class="input-group mb-3">
+                    <label class="input-group-text" for="inputGroupFile01"><i class="bi bi-diagram-2"></i></label>
+                    <input name="group-picture" type="file" class="form-control" id="inputGroupFile01">
+                </div>
+            </div>
+            <div class="col col-6">
+                <button type="submit" class="btn btn-outline-secondary">Додати</button>
+            </div>
+        </div>
+    </form>
+
+    <hr/>
+
+    <form enctype="multipart/form-data" method="post" id="shop-product-form">
+        <div class="row">
+            <div class="col col-6">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="name-addon"><i class="bi bi-body-text"></i></span>
+                    <input name="product-name" type="text" class="form-control" placeholder="Назва товару" aria-label="Назва товару" aria-describedby="name-addon">
+                </div>
+            </div>
+            <div class="col col-6">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="description-addon"><i class="bi bi-person-vcard"></i></span>
+                    <textarea name="product-description" type="text" class="form-control" placeholder="Опис" aria-label="Опис" aria-describedby="description-addon"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col col-6">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="price-addon"><i class="bi bi-body-text"></i></span>
+                    <input name="product-price" type="number" class="form-control" placeholder="Ціна товару" aria-label="Ціна товару" aria-describedby="price-addon">
+                </div>
+            </div>
+            <div class="col col-6">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="amount-addon"><i class="bi bi-person-vcard"></i></span>
+                    <input name="product-amount" type="number" class="form-control" placeholder="Кіл-ть товару" aria-label="Кіл-ть товару" aria-describedby="amount-addon">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col col-6">
+                <div class="input-group mb-3">
+                    <label class="input-group-text" for="inputGroupFile01"><i class="bi bi-diagram-2"></i></label>
+                    <input name="product-picture" type="file" class="form-control" id="inputGroupFile01">
+                </div>
+            </div>
+            <div class="col col-6">
+                <button type="submit" class="btn btn-outline-secondary">Додати</button>
+            </div>
+        </div>
+    </form>
+}
+

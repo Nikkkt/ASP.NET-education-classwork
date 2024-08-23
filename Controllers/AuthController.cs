@@ -43,9 +43,9 @@ namespace ASP.NET_Classwork.Controllers
             var nameRegex = new Regex(@"^\w{2,}(\s+\w{2,})*$");
             var birthdayRegex = new Regex(@"^(0[1-9]|[12][0-9]|3[01])[-./](0[1-9]|1[0-2])[-./](\d{4})$");
 
-            var user = emailRegex.IsMatch(input) ? _dataContext.Users.FirstOrDefault(u => u.Email == input) :
-                nameRegex.IsMatch(input) ? _dataContext.Users.FirstOrDefault(u => u.Name == input) :
-                birthdayRegex.IsMatch(input) ? _dataContext.Users.FirstOrDefault(u => u.Birthdate == Convert.ToDateTime(input)) :
+            var user = emailRegex.IsMatch(input) ? _dataContext.Users.FirstOrDefault(u => u.Email == input && u.DeleteDt == null) :
+                nameRegex.IsMatch(input) ? _dataContext.Users.FirstOrDefault(u => u.Name == input && u.DeleteDt == null) :
+                birthdayRegex.IsMatch(input) ? _dataContext.Users.FirstOrDefault(u => u.Birthdate == Convert.ToDateTime(input) && u.DeleteDt == null) :
                 null;
 
             // Розшифрувати DK неможливо, тому повторюємо розрахунок DK з сіллю, що зберігається у користувача, та паролем, який був переданий
@@ -235,6 +235,79 @@ namespace ASP.NET_Classwork.Controllers
                 status = "OK",
                 code = 200,
                 message = "Updated"
+            };
+        }
+
+        public async Task<object> DoOther()
+        {
+            switch(Request.Method)
+            {
+                case "UNLINK":
+                {
+                    return await DoUnlink();
+                }
+
+                default:
+                {
+                    return new
+                    {
+                        status = "Error",
+                        code = 405,
+                        message = "Method not allowed"
+                    };
+                }
+            }
+        }
+
+        private async Task<object> DoUnlink()
+        {
+            Guid userId;
+
+            try
+            {
+                userId = Guid.Parse(HttpContext.User.Claims.First(c => c.Type == ClaimTypes.Sid).Value);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"DoUnlink Exception : {ex}");
+                return new
+                {
+                    status = "Error",
+                    code = 401,
+                    message = "unAuthorized"
+                };
+            }
+
+            var user = await _dataContext.Users.FindAsync(userId);
+
+            if (user == null)
+            {
+                return new
+                {
+                    status = "Error",
+                    code = 403,
+                    message = "Forbidden"
+                };
+            }
+
+            user.DeleteDt = DateTime.Now;
+            user.Name = "";
+            user.Email = "";
+            user.Birthdate = null;
+            if (user.Avatar != null)
+            {
+                String path = "./Uploads/User/";
+                System.IO.File.Delete(path + user.Avatar);
+                user.Avatar = null;
+            }
+            await _dataContext.SaveChangesAsync();
+            this.DoDelete();
+
+            return new
+            {
+                status = "OK",
+                code = 200,
+                message = "Deleted"
             };
         }
     }

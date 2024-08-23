@@ -13,5 +13,9 @@
         public String  Salt   { get; set; } = null!;
         public String  Dk     { get; set; } = null!;
         public String? Avatar { get; set; } = null!;
+
+        //////////////////// DELETE ///////////////////
+
+        public DateTime? DeleteDt { get; set; }
     }
 }

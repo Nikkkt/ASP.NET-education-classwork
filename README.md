@@ -54,3 +54,7 @@
 # Homework 13
 
 ![Homework 13](./github/16.png)
+
+# Homework 14
+
+![Homework 14](./github/17.png)
