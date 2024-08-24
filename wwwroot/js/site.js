@@ -30,6 +30,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const profileDeleteButton = document.getElementById("profile-delete")
     if (profileDeleteButton) profileDeleteButton.addEventListener('click', profileDeleteClick)
+
+    const recoveryButton = document.getElementById("recovery-button")
+    if (recoveryButton) recoveryButton.addEventListener('click', recoveryClick)
+
+    const closeButton = document.getElementById("close-button")
+    if (closeButton) closeButton.addEventListener('click', closeClick)
 })
 
 function authClick() {
@@ -38,6 +44,9 @@ function authClick() {
 
     const passwordInput = document.querySelector('[name="auth-user-password"]')
     if (!passwordInput) throw '[name="auth-user-password"] not found'
+
+    const recoveryInput = document.querySelector('[name="registration-date"]')
+    if (!recoveryInput) console.log('[name="registration-date"] not found')
 
     const errorDiv = document.getElementById("auth-error")
     if (!errorDiv) throw 'auth-error not found'
@@ -53,6 +62,8 @@ function authClick() {
 
     const email = emailInput.value.trim()
     const password = passwordInput.value
+    let registrationDate
+    if (recoveryInput) registrationDate = recoveryInput.value
 
     if (email.length === 0) {
         errorDiv.show("Заповніть Email")
@@ -62,26 +73,104 @@ function authClick() {
         errorDiv.show("Заповніть пароль")
         return
     }
+    if (recoveryInput && registrationDate.length === 0) {
+        errorDiv.show("Заповніть дату реєстрації")
+        return
+    }
     errorDiv.hide()
 
-    console.log(email, password)
+    console.log(email, password, registrationDate ? registrationDate : 0)
 
-    fetch(`/api/auth?input=${email}&password=${password}`, {
-        method: 'GET'
-    }).then(r => r.json()).then(j => {
-        console.log(j)
-        if (j.code != 200) {
-            errorDiv.show("Відмова. Перевірьте введені дані")
-        } else {
-            window.location.reload()
+    if (!registrationDate) {
+        fetch(`/api/auth?input=${email}&password=${password}`, {
+            method: 'GET'
+        }).then(r => r.json()).then(j => {
+            console.log(j)
+            if (j.code != 200) {
+                errorDiv.show("Відмова. Перевірьте введені дані")
+            } else {
+                window.location.reload()
+            }
+        })
+    } else {
+        let input = {
+            "email": email,
+            "password": password,
+            "regDate": registrationDate
         }
-    })
+        fetch(`/api/auth`, {
+            method: 'LINK',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(input)
+        }).then(r => r.json()).then(j => {
+            console.log(j)
+            if (j.code != 200) {
+                errorDiv.show("Відмова. Перевірьте введені дані")
+            } else {
+                window.location.reload()
+            }
+        })
+    }
 }
 
 function logOutClick() {
     fetch('/api/auth', {
         method: 'DELETE'
     }).then(r => location.reload())
+}
+
+function recoveryClick() {
+    const recoveryInput = document.querySelector('[name="registration-date"]')
+    const emailInput = document.querySelector('[name="auth-user-email"]')
+    const recoveryButton = document.querySelector('[id="recovery-button"]')
+    const logInButton = document.querySelector('[id="auth-button"]')
+
+    if (!recoveryInput) {
+        const newRow = document.createElement('div');
+        newRow.classList.add('row');
+
+        const inputGroup = document.createElement('div');
+        inputGroup.classList.add('input-group', 'mb-3');
+
+        const inputGroupText = document.createElement('span');
+        inputGroupText.classList.add('input-group-text');
+        inputGroupText.id = 'registration-date-addon';
+        inputGroupText.innerHTML = '<i class="bi bi-calendar"></i>';
+
+        const newInput = document.createElement('input');
+        newInput.type = 'date';
+        newInput.name = 'registration-date';
+        newInput.classList.add('form-control');
+        newInput.placeholder = 'Дата реєстрації';
+        newInput.setAttribute('aria-label', 'Дата реєстрації');
+        newInput.setAttribute('aria-describedby', 'registration-date-addon');
+
+        inputGroup.appendChild(inputGroupText);
+        inputGroup.appendChild(newInput);
+
+        newRow.appendChild(inputGroup);
+
+        document.querySelector('.modal-body').appendChild(newRow);
+
+        recoveryButton.textContent = 'Скасувати'
+        logInButton.textContent = 'Відновлення'
+
+        emailInput.placeholder = "Ел. пошта"
+    }
+    else {
+        closeClick()
+        recoveryButton.textContent = 'Відновлення'
+        logInButton.textContent = 'Вхід'
+
+        emailInput.placeholder = "Ел. пошта / ім'я / дата народження"
+    }
+}
+
+function closeClick() {
+    const registrationDateRow = document.querySelector('[name="registration-date"]')?.closest('.row')
+    if (registrationDateRow) registrationDateRow.remove()
 }
 
 function profileEditClick(e) {

@@ -95,11 +95,7 @@ namespace ASP.NET_Classwork.Controllers
 
         public IActionResult Shop()
         {
-            ShopPageModel model = new() 
-            { 
-                ProductGroups = _dataContext.Groups.Where(g => g.DeleteDt == null)
-            };
-            return View(model);
+            return RedirectToAction("Index", "Shop");
         }
 
         public IActionResult SignUp()
@@ -298,7 +294,8 @@ namespace ASP.NET_Classwork.Controllers
         public IActionResult Download([FromRoute] String id) 
         {
             // id - закладена в маршрутизаторі назва, суть - ім'я файлу
-            String filename = $"./Uploads/User/{id}";
+            id = id.Replace('_', '/');
+            String filename = $"./Uploads/{id}";
             if (System.IO.File.Exists(filename))
             {
                 var stream = new StreamReader(filename).BaseStream;

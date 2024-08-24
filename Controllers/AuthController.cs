@@ -1,5 +1,6 @@
 ﻿using ASP.NET_Classwork.Data;
 using ASP.NET_Classwork.Data.Entities;
+using ASP.NET_Classwork.Migrations;
 using ASP.NET_Classwork.Services.KDF;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -246,7 +247,17 @@ namespace ASP.NET_Classwork.Controllers
                 {
                     return await DoUnlink();
                 }
+                case "LINK":
+                {
+                    String body = await new StreamReader(Request.Body).ReadToEndAsync();
+                    JsonNode json = JsonSerializer.Deserialize<JsonNode>(body) ?? throw new Exception("JSON in body is invalid");
 
+                    String? email = json["email"]?.GetValue<String>();
+                    String? password = json["password"]?.GetValue<String>();
+                    String? regDate = json["regDate"]?.GetValue<String>();
+
+                    return await DoLink(email, password, regDate);
+                }
                 default:
                 {
                     return new
@@ -257,6 +268,43 @@ namespace ASP.NET_Classwork.Controllers
                     };
                 }
             }
+        }
+
+        private async Task<object> DoLink(String email, String password, String regDate)
+        {
+            var users = _dataContext.Users.Where(u => u.Registered.Date.Equals(DateTime.Parse(regDate).Date));
+            User? recoveredUser = null;
+            foreach (var user in users)
+            {
+                if (_kdfService.DerivedKey(password, user.Salt) == user.Dk)
+                {
+                    recoveredUser = user;
+                    break;
+                }
+            }
+
+            if (recoveredUser == null)
+            {
+                return new
+                {
+                    status = "Error",
+                    code = 404,
+                    message = "User not found"
+                };
+            }
+
+            recoveredUser.Email = email;
+            recoveredUser.Name = "Anonymous";
+            recoveredUser.DeleteDt = null;
+
+            await _dataContext.SaveChangesAsync();
+
+            return new
+            {
+                status = "OK",
+                code = 200,
+                message = "Recovered"
+            };
         }
 
         private async Task<object> DoUnlink()
@@ -307,7 +355,7 @@ namespace ASP.NET_Classwork.Controllers
             {
                 status = "OK",
                 code = 200,
-                message = "Deleted"
+                message = $"Для відновлення введіть дату реєстрації ({user.Registered.ToString().Split(" ")[0]}) та свій пароль"
             };
         }
     }

@@ -43,7 +43,7 @@
                         <a asp-controller="Home" asp-action="Profile" class="a-no-underline">
                             @if (hasAvatar)
                             {
-                                <img class="avatar" src="/Home/Download/@(avatar)" alt="avatar"/>
+                                <img class="avatar" src="/Home/Download/User_@(avatar)" alt="avatar"/>
                             }
                             else
                             {
@@ -110,7 +110,8 @@
                 </div>
                 <div class="modal-footer">
                     <div class="alert alert-danger" role="alert" id="auth-error" style="visibility:hidden"></div>
-                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Закрити</button>
+                    <button type="button" class="btn btn-outline-danger" id="close-button" data-bs-dismiss="modal">Закрити</button>
+                    <button type="button" class="btn btn-outline-info" id="recovery-button">Відновлення</button>
                     <button type="button" class="btn btn-outline-success" id="auth-button">Вхід</button>
                 </div>
             </div>

@@ -1,0 +1,15 @@
+﻿@model ASP.NET_Classwork.Data.Entities.ProductGroup
+
+<div class="product-card">
+    <img src="/Home/Download/Shop_@Model.Image" class="product-img" />
+    <div class="product-text">
+        <h3>@Model.Name</h3>
+        <p class="description">@Model.Description</p>
+    </div>
+    <a asp-action="Group" asp-route-id="@(Model.Slug ?? Model.Id.ToString())">
+        <div class="product-cart">
+            <button type="submit">Подивитись</button>
+        </div>
+    </a>
+    
+</div>

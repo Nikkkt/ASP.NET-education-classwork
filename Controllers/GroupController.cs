@@ -38,7 +38,8 @@ namespace ASP_P15.Controllers
                     Name = formModel.Name,
                     Description = formModel.Description,
                     Image = uploadedName,
-                    DeleteDt = null
+                    DeleteDt = null,
+                    Slug = formModel.Slug
                 });
 
             await _dataContext.SaveChangesAsync();

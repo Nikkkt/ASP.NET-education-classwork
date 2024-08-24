@@ -11,6 +11,9 @@ namespace ASP.NET_Classwork.Models.Group
         [FromForm(Name = "group-description")]
         public String Description { get; set; } = null!;
 
+        [FromForm(Name = "group-slug")]
+        public String Slug { get; set; } = null!;
+
         [FromForm(Name = "group-picture")]
         [JsonIgnore]
         public IFormFile ImageFile { get; set; } = null!;

@@ -11,5 +11,6 @@
         public long           Amount        { get; set; }
         public DateTime?      DeleteDt      { get; set; }
         public ProductGroup   Group         { get; set; }
+        public String?        Slug          { get; set; }
     }
 }
