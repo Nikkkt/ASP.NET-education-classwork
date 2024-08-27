@@ -14,6 +14,19 @@
                 alert(j.message)
             }
         })
+    } else if (form.id == 'shop-product-form') {
+        e.preventDefault()
+        const formData = new FormData(form)
+        fetch('/api/product', {
+            method: 'POST',
+            body: formData
+        }).then(r => r.json()).then(j => {
+            if (j.status == 'OK') {
+                window.location.reload()
+            } else {
+                alert(j.message)
+            }
+        })
     }
 })
 

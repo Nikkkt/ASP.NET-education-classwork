@@ -1,6 +1,8 @@
 ﻿using ASP.NET_Classwork.Data;
+using ASP.NET_Classwork.Data.Entities;
 using ASP.NET_Classwork.Models.Shop;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ASP.NET_Classwork.Controllers
 {
@@ -18,9 +20,24 @@ namespace ASP.NET_Classwork.Controllers
 
         public IActionResult Group(String id)
         {
+            ProductGroup? group = null;
+            var source = _dataContext.Groups.Include(g => g.Products).Where(g => g.DeleteDt == null);
+            group = source.FirstOrDefault(g => g.Slug == id);
+            if (group == null)
+            {
+                try
+                {
+                    group = source.FirstOrDefault(g => g.Id == Guid.Parse(id));
+                }
+                catch { }
+            }
+            if (group == null)
+            {
+                return View("Page404");
+            }
 
-            ViewData["id"] = id;
-            return View();
+            ShopGroupPageModel model = new() { ProductGroup = group };
+            return View(model);
         }
     }
 }

@@ -17,5 +17,9 @@
         //////////////////// DELETE ///////////////////
 
         public DateTime? DeleteDt { get; set; }
+
+        //////////////////// ROLES ////////////////////
+        
+        public String Role { get; set; } = null!;
     }
 }

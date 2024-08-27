@@ -20,6 +20,19 @@ namespace ASP_P15.Controllers
             try
             {
                 uploadedName = _fileUploader.UploadFile(formModel.ImageFile, "./Uploads/Shop");
+
+                _dataContext.Groups.Add(
+                    new()
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = formModel.Name,
+                        Description = formModel.Description,
+                        Image = uploadedName,
+                        DeleteDt = null,
+                        Slug = formModel.Slug
+                    });
+
+                await _dataContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -30,20 +43,6 @@ namespace ASP_P15.Controllers
                     message = ex.Message
                 };
             }
-
-            _dataContext.Groups.Add(
-                new()
-                {
-                    Id = Guid.NewGuid(),
-                    Name = formModel.Name,
-                    Description = formModel.Description,
-                    Image = uploadedName,
-                    DeleteDt = null,
-                    Slug = formModel.Slug
-                });
-
-            await _dataContext.SaveChangesAsync();
-
             return new
             {
                 status = "OK",

@@ -1,7 +1,9 @@
-﻿@model ASP.NET_Classwork.Models.Shop.ShopPageModel
+﻿@using System.Security.Claims
+
+@model ASP.NET_Classwork.Models.Shop.ShopPageModel
 @{
     ViewData["Title"] = "Shop";
-    bool isAuthenticated = Context.User.Identity?.IsAuthenticated ?? false;
+    bool isAdmin = Context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value == "Admin";
 }
 
 <div class="text-center">
@@ -15,7 +17,7 @@
     }
 </div>
 
-@if (isAuthenticated)
+@if (isAdmin)
 {
     <hr />
     <form enctype="multipart/form-data" method="post" id="shop-group-form">
@@ -23,7 +25,7 @@
             <div class="col col-6">
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="name-addon"><i class="bi bi-body-text"></i></span>
-                    <input name="group-name" type="text" class="form-control" placeholder="Назва товару" aria-label="Назва товару" aria-describedby="name-addon">
+                    <input name="group-name" type="text" class="form-control" placeholder="Назва групи" aria-label="Назва групи" aria-describedby="name-addon">
                 </div>
             </div>
             <div class="col col-6">
@@ -82,6 +84,25 @@
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="amount-addon"><i class="bi bi-person-vcard"></i></span>
                     <input name="product-amount" type="number" class="form-control" placeholder="Кіл-ть товару" aria-label="Кіл-ть товару" aria-describedby="amount-addon">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col col-6">
+                <div class="input-group mb-3">
+                    <label class="input-group-text" for="inputGroupSelect01">Група</label>
+                    <select name="group-id" class="form-select" id="inputGroupSelect01">
+                        @foreach (var grp in Model.ProductGroups)
+                        {
+                            <option value="@grp.Id">@grp.Name (@grp.Description)</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col col-6">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="slug-addon"><i class="bi bi-person-vcard"></i></span>
+                    <input name="product-slug" type="text" class="form-control" placeholder="Slug товару" aria-label="Slug товару" aria-describedby="slug-addon">
                 </div>
             </div>
         </div>

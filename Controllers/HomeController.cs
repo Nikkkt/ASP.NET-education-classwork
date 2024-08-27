@@ -126,6 +126,7 @@ namespace ASP.NET_Classwork.Controllers
                         Birthdate = DateTime.ParseExact(formModel.UserBirthday, "dd-MM-yyyy", CultureInfo.InvariantCulture),
                         Registered = DateTime.Now,
                         Avatar = HttpContext.Session.GetString(fileNameKey),
+                        Role = "Guest"
                     });
                     _dataContext.SaveChanges();
                 }

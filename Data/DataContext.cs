@@ -21,6 +21,14 @@ namespace ASP.NET_Classwork.Data
                 .WithMany(g => g.Products)
                 .HasForeignKey(p => p.GroupId)
                 .HasPrincipalKey(g => g.Id);
+
+            modelBuilder.Entity<Entities.Product>()
+                .HasIndex(p => p.Slug)
+                .IsUnique();
+
+            modelBuilder.Entity<Entities.ProductGroup>()
+                .HasIndex(g => g.Slug)
+                .IsUnique();
         }
     }
 }

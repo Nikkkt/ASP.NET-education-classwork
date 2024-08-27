@@ -48,7 +48,9 @@ namespace ASP.NET_Classwork.Middleware.SessionAuth
                                 new(ClaimTypes.UserData,    user.Avatar ?? ""),
 
                                 new(ClaimTypes.DateOfBirth, user.Birthdate?.ToShortDateString() ?? "- - -"),
-                                new("User::Registered",     user.Registered.ToString())
+                                new("User::Registered",     user.Registered.ToString()),
+
+                                new(ClaimTypes.Role, user.Role)
                             ];
 
                             // в ASP у HttpContext є властивість User, що є "власником" Claims
