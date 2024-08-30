@@ -36,7 +36,17 @@ namespace ASP.NET_Classwork.Controllers
                 return View("Page404");
             }
 
-            ShopGroupPageModel model = new() { ProductGroup = group };
+            ShopGroupPageModel model = new() 
+            { 
+                ProductGroup = group, 
+                Groups = source 
+            };
+            return View(model);
+        }
+
+        public IActionResult Product(String id)
+        {
+            ShopProductPageModel model = new();
             return View(model);
         }
     }

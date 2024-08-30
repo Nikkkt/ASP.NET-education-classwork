@@ -1,5 +1,35 @@
 ﻿@model ASP.NET_Classwork.Models.Shop.ShopGroupPageModel
 
-@Model.ProductGroup.Name
+<div class="page-content">
+    <div class="left-block">
+        <h3>За ціною:</h3>
+        @foreach (var price in Model.ProductGroup.Products.Select(p => p.Price).Distinct().OrderBy(p => p))
+        {
+            <div>
+                <input type="radio" id="price-@price" name="price" value="@price">
+                <label for="price-@price">до @price грн</label>
+            </div>
+        }
+    </div>
 
-@Model.ProductGroup.Products.Count()
+    <div class="content-container">
+        <div class="groups-small-list-wrapper">
+            <div class="groups-small-list">
+                @foreach (var grp in Model.Groups)
+                {
+                    <a asp-action="Group" asp-route-id="@(grp.Slug ?? grp.Id.ToString())" class="a-no-underline">
+                        <div class="groups-row-item @(grp.Id == Model.ProductGroup.Id ? "groups-row-item-selected" : "")">
+                            <img src="/Home/Download/Shop_@(grp.Image)" alt="Picture" />
+                            <p>@grp.Name</p>
+                        </div>
+                    </a>
+                }
+            </div>
+        </div>
+
+        @foreach (var product in @Model.ProductGroup.Products)
+        {
+            @Html.DisplayFor(m => product)
+        }
+    </div>
+</div>

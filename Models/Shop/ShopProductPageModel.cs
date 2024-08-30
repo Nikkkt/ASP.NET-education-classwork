@@ -2,9 +2,9 @@
 
 namespace ASP.NET_Classwork.Models.Shop
 {
-    public class ShopGroupPageModel
+    public class ShopProductPageModel
     {
+        public Data.Entities.Product Product { get; set; } = null!;
         public ProductGroup ProductGroup { get; set; } = null!;
-        public IEnumerable<ProductGroup> Groups { get; set; } = null!;
     }
 }
