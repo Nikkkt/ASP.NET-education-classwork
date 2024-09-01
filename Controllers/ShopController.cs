@@ -46,7 +46,25 @@ namespace ASP.NET_Classwork.Controllers
 
         public IActionResult Product(String id)
         {
-            ShopProductPageModel model = new();
+            Product? product = null;
+            var source = _dataContext.Products.Where(p => p.DeleteDt == null).Include(p => p.Group).ThenInclude(g => g.Products);
+            product = source.FirstOrDefault(p => p.Slug == id);
+
+            if (product == null)
+            {
+                product = source.FirstOrDefault(p => p.Id.ToString() == id);
+            }
+
+            if (product == null)
+            {
+                return View("Page404");
+            }
+
+            ShopProductPageModel model = new() 
+            { 
+                Product = product,
+                ProductGroup = product.Group
+            };
             return View(model);
         }
     }

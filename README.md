@@ -70,3 +70,7 @@
 # Homework 17
 
 ![Homework 17](./github/20.png)
+
+# Homework 18
+
+![Homework 18](./github/21.png)

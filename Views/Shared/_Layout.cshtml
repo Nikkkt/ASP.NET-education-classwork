@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/product.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ASP.NET_Classwork.styles.css" asp-append-version="true" />
 </head>
 <body>
@@ -59,13 +60,13 @@
                         <button type="button" class="btn btn-outline-secondary mx-2" data-bs-toggle="modal" data-bs-target="#authModal">
                             <i class="bi bi-box-arrow-in-right"></i>
                         </button>
-                        <a href="Home/SignUp" title="Реєстрація" class="btn btn-outline-secondary"><i class="bi bi-person-circle"></i></a>
+                        <a class="btn btn-outline-secondary" asp-area="" asp-controller="Home" asp-action="SignUp"><i class="bi bi-person-circle"></i></a>
                     }
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="main-container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

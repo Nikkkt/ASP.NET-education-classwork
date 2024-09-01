@@ -1,18 +1,20 @@
 ﻿@model ASP.NET_Classwork.Data.Entities.Product
 
 <div class="item-product-card">
-    <div class="product-img-container">
-        <img src="/Home/Download/Shop_@(Model.Picture)" alt="Picture" />
-    </div>
-    <div class="product-info-container">
-        <h2>
-            @Model.Name
-        </h2>
-        <p>
-            @Model.Description
-        </p>
-        <h3>
-            ₴ @Model.Price 
-        </h3>
-    </div>
+    <a asp-action="Product" asp-route-id="@(Model.Slug ?? Model.Id.ToString())" class="a-no-underline">
+        <div class="product-img-container">
+            <img src="/Home/Download/Shop_@(Model.Picture)" alt="Picture" />
+        </div>
+        <div class="product-info-container">
+            <h2>
+                @Model.Name
+            </h2>
+            <p>
+                @Model.Description
+            </p>
+            <h3>
+                ₴ @Model.Price 
+            </h3>
+        </div>
+    </a>
 </div>
