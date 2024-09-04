@@ -8,6 +8,7 @@ namespace ASP.NET_Classwork.Data
         public DbSet<Entities.Token> Tokens { get; set; }
         public DbSet<Entities.Product> Products { get; set; }
         public DbSet<Entities.ProductGroup> Groups { get; set; }
+        public DbSet<Entities.Feedback> Feedbacks { get; set; }
         public DataContext(DbContextOptions options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -29,6 +30,14 @@ namespace ASP.NET_Classwork.Data
             modelBuilder.Entity<Entities.ProductGroup>()
                 .HasIndex(g => g.Slug)
                 .IsUnique();
+
+            modelBuilder.Entity<Entities.Feedback>()
+                .HasOne(f => f.Product)
+                .WithMany(p => p.Feedbacks);
+
+            modelBuilder.Entity<Entities.Feedback>()
+                .HasOne(f => f.User)
+                .WithMany();
         }
     }
 }

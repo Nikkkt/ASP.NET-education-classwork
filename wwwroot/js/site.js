@@ -49,7 +49,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const closeButton = document.getElementById("close-button")
     if (closeButton) closeButton.addEventListener('click', closeClick)
+
+    const productFeedbackButton = document.getElementById("product-feedback-button")
+    if (productFeedbackButton) productFeedbackButton.addEventListener('click', productFeedbackClick)
+
+    
 })
+
+function productFeedbackClick(e) {
+    const textarea = document.getElementById("product-feedback")
+    const userId = textarea.getAttribute("data-user-id")
+    const productId = textarea.getAttribute("data-product-id")
+    const timeStamp = textarea.getAttribute("data-timestamp")
+
+    var text = textarea.value.trim()
+    fetch("/api/feedback", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            userId,
+            productId,
+            text,
+            timeStamp
+        })
+    }).then(r => r.json()).then(console.log)
+
+    console.log(userId, productId, text)
+}
 
 function authClick() {
     const emailInput = document.querySelector('[name="auth-user-email"]')

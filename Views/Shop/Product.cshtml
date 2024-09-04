@@ -1,4 +1,10 @@
-﻿@model ASP.NET_Classwork.Models.Shop.ShopProductPageModel
+﻿@using System.Security.Claims
+
+@model ASP.NET_Classwork.Models.Shop.ShopProductPageModel
+@{
+    bool isAuthenticated = Context.User.Identity?.IsAuthenticated ?? false;
+    String? userId = Context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid)?.Value;
+}
 
 <div class="row">
     <div class="col col-sm-6 col-xl-4">
@@ -9,6 +15,19 @@
         <p>@Model.Product.Description</p>
         <h2>₴ @Model.Product.Price.ToString("F2")</h2>
         <button class="btn btn-outline-success"><i class="bi bi-cart3"></i> До кошику</button>
+
+        <div class="row">
+            <b>Відгуки про товар:</b>
+
+        </div>
+        @if(isAuthenticated)
+        {
+            <div class="row">
+                <b>Додати відгук:</b>
+                <textarea id="product-feedback" data-user-id="@userId" data-timestamp="@DateTime.Now.Ticks" data-product-id="@Model.Product.Id"></textarea><br />
+                <button id="product-feedback-button" class="btn btn-outline-info">Надіслати</button>
+            </div>
+        }
     </div>
 </div>
 
