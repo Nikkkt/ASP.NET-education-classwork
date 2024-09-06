@@ -8,6 +8,6 @@
         public String?                Image         { get; set; }
         public DateTime?              DeleteDt      { get; set; }
         public String?                Slug          { get; set; }
-        public IEnumerable<Product>   Products      { get; set; }
+        public IEnumerable<Product>   Products      { get; set; } = null!;
     }
 }

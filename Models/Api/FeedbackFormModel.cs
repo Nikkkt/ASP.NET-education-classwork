@@ -5,6 +5,7 @@
         public Guid ProductId { get; set; }
         public Guid UserId { get; set; }
         public String Text { get; set; }
-        public long Timestamp { get; set; }
+        public long Timestamp { get; set; } = DateTime.Now.Ticks;
+        public int Rate { get; set; } = 5;
     }
 }

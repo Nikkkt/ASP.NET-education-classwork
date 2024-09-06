@@ -27,6 +27,49 @@ body {
   margin-bottom: 60px;
 }
 
+.product-feedback-container {
+    border: 2px solid lightgray;
+    border-radius: 5px;
+    height: 41vh;
+    overflow: auto;
+    width: 95%;
+}
+
+.product-feedback {
+    border: 2px solid lightgray;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    width: 90%;
+}
+
+.product-feedback i {
+    font-size: small;
+}
+
+.product-feedback span {
+    color: gold;
+}
+
+.product-feedback p {
+    padding: 0;
+    margin: 0;
+}
+
+.my-product-feedback {
+    color: darkgreen;
+    border-color: green;
+}
+
+.product-feedback-add-container {
+    width: 80%;
+    margin: 0 10%;
+}
+
+.product-feedback-add-container textarea {
+    height: 70%;
+}
+
 .title_image {
     width: 200px;
     height: 130px;
@@ -368,7 +411,7 @@ h6 {
     display: inline-block;
     width: 250px;
     margin: 50px 5px 5px 5px;
-    height: 425px;
+    height: 475px;
     border: 2px solid lightgray;
     transition: border-color 0.3s ease;
     border-radius: 5px;

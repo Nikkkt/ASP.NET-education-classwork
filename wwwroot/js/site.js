@@ -61,6 +61,7 @@ function productFeedbackClick(e) {
     const userId = textarea.getAttribute("data-user-id")
     const productId = textarea.getAttribute("data-product-id")
     const timeStamp = textarea.getAttribute("data-timestamp")
+    const rate = document.getElementById("product-feedback-rate").value
 
     var text = textarea.value.trim()
     fetch("/api/feedback", {
@@ -72,11 +73,16 @@ function productFeedbackClick(e) {
             userId,
             productId,
             text,
-            timeStamp
+            timeStamp,
+            rate
         })
-    }).then(r => r.json()).then(console.log)
-
-    console.log(userId, productId, text)
+    }).then(r => r.json()).then(j => {
+        if (j.data === "Created") {
+            window.location.reload()
+        } else {
+            alert("Щось пішло не так")
+        }
+    })
 }
 
 function authClick() {

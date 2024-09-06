@@ -1,5 +1,21 @@
 ﻿@model ASP.NET_Classwork.Data.Entities.Product
 
+@{
+    int feedbacksAmount = Model.Feedbacks.Count();
+    int avgFeedback = 0;
+    int sum = 0;
+    int amount = 0;
+
+    foreach (var feedback in Model.Feedbacks)
+    {
+        sum += feedback.Rate;
+        amount++;
+    }
+
+    if (amount == 0) avgFeedback = 0;
+    else avgFeedback = sum / amount;
+}
+
 <div class="item-product-card">
     <a asp-action="Product" asp-route-id="@(Model.Slug ?? Model.Id.ToString())" class="a-no-underline">
         <div class="product-img-container">
@@ -12,9 +28,22 @@
             <p>
                 @Model.Description
             </p>
+            <h5>
+                @for (int i = 0; i < avgFeedback; ++i)
+                {
+                    <span class="bi bi-star-fill" style="color: gold;"></span>
+                }
+                @for (int i = 0; i < 5 - avgFeedback; ++i)
+                {
+                    <span class="bi bi-star" style="color: gold;"></span>
+                }
+            </h5>
             <h3>
-                ₴ @Model.Price 
+                ₴ @Model.Price
             </h3>
+            <h6>
+                <i>кількість коментарів: @feedbacksAmount</i>
+            </h6>
         </div>
     </a>
 </div>

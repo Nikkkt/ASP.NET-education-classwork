@@ -12,6 +12,6 @@
         public DateTime?              DeleteDt      { get; set; }
         public ProductGroup           Group         { get; set; }
         public String?                Slug          { get; set; }
-        public IEnumerable<Feedback>  Feedbacks     { get; set; }
+        public IEnumerable<Feedback>  Feedbacks     { get; set; } = null!;
     }
 }

@@ -36,7 +36,8 @@ namespace ASP.NET_Classwork.Controllers
                 UserId = model.UserId,
                 ProductId = model.ProductId,
                 Text = model.Text,
-                Timestamp = model.Timestamp
+                Timestamp = model.Timestamp,
+                Rate = model.Rate
             });
 
             await _dataContext.SaveChangesAsync();

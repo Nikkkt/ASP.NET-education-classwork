@@ -4,34 +4,89 @@
 @{
     bool isAuthenticated = Context.User.Identity?.IsAuthenticated ?? false;
     String? userId = Context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid)?.Value;
+    int avgFeedback = 0;
+    int sum = 0;
+    int amount = 0;
+
+    foreach (var feedback in Model.Product.Feedbacks)
+    {
+        sum += feedback.Rate;
+        amount++;
+    }
+
+    if (amount == 0) avgFeedback = 0;
+    else avgFeedback = sum / amount;
 }
 
 <div class="row">
     <div class="col col-sm-6 col-xl-4">
         <img class="product-picture" src="/Home/Download/Shop_@(Model.Product.Picture)" alt="Picture" />
     </div>
-    <div class="col col-6">
+    <div class="col col-sm-4 col-xl-4">
         <h1>@Model.Product.Name</h1>
         <p>@Model.Product.Description</p>
         <h2>₴ @Model.Product.Price.ToString("F2")</h2>
+        <h5>
+            @for (int i = 0; i < avgFeedback; ++i)
+            {
+                <span class="bi bi-star-fill" style="color: gold;"></span>
+            }
+            @for (int i = 0; i < 5 - avgFeedback; ++i)
+            {
+                <span class="bi bi-star" style="color: gold;"></span>
+            }
+        </h5>
         <button class="btn btn-outline-success"><i class="bi bi-cart3"></i> До кошику</button>
 
         <div class="row">
             <b>Відгуки про товар:</b>
+            @if (Model.Product.Feedbacks.Count() == 0)
+            {
+                <i>Відгуків поки що немає</i>
+            }
+            else
+            {
+                <div class="product-feedback-container">
+                    @foreach (var feedback in Model.Product.Feedbacks)
+                    {
+                        String myClass = isAuthenticated && feedback.User?.Id.ToString() == userId ? "my-product-feedback" : String.Empty;
 
+                        <div class="product-feedback @myClass">
+                            <b>@(feedback.User?.Name ?? "Анонімно")</b>
+                            <i>@DateTime.FromBinary(feedback.Timestamp).ToShortDateString()</i>
+                            <p>@feedback.Text</p>
+
+                            @for (int i = 0; i < feedback.Rate; ++i)
+                            {
+                                <span class="bi bi-star-fill"></span>
+                            }
+                            @for (int i = 0; i < 5 - feedback.Rate; ++i)
+                            {
+                                <span class="bi bi-star"></span>
+                            }
+                        </div>
+                    }
+                </div>
+            }
         </div>
-        @if(isAuthenticated)
-        {
-            <div class="row">
-                <b>Додати відгук:</b>
-                <textarea id="product-feedback" data-user-id="@userId" data-timestamp="@DateTime.Now.Ticks" data-product-id="@Model.Product.Id"></textarea><br />
-                <button id="product-feedback-button" class="btn btn-outline-info">Надіслати</button>
-            </div>
-        }
+    </div>
+
+    <div class="col col-sm-2 col-xl-4">
+        <div class="d-flex justify-content-center">
+            @if (isAuthenticated)
+            {
+                <div class="product-feedback-add-container">
+                    <b>Додати відгук:</b>
+                    <input class="form-control" type="number" id="product-feedback-rate" value="5" min="1" max="5" />
+                    <textarea class="form-control" id="product-feedback" data-user-id="@userId" data-timestamp="@DateTime.Now.Ticks" data-product-id="@Model.Product.Id"></textarea><br />
+                    <button id="product-feedback-button" class="btn btn-outline-info">Надіслати</button>
+                </div>
+            }
+        </div>
     </div>
 </div>
 
-<h2>Вас також може зацікавити</h2>
+<h3>Вас також може зацікавити</h3>
 
 <div class="row">
     @foreach(var product in Model.ProductGroup.Products.Where(p => p != Model.Product).Take(5))

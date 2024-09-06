@@ -50,7 +50,7 @@ namespace ASP.NET_Classwork.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Feedbacks");
+                    b.ToTable("Feedbacks", (string)null);
                 });
 
             modelBuilder.Entity("ASP.NET_Classwork.Data.Entities.Product", b =>
@@ -92,7 +92,7 @@ namespace ASP.NET_Classwork.Migrations
                         .IsUnique()
                         .HasFilter("[Slug] IS NOT NULL");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("ASP.NET_Classwork.Data.Entities.ProductGroup", b =>
@@ -124,7 +124,7 @@ namespace ASP.NET_Classwork.Migrations
                         .IsUnique()
                         .HasFilter("[Slug] IS NOT NULL");
 
-                    b.ToTable("Groups");
+                    b.ToTable("Groups", (string)null);
                 });
 
             modelBuilder.Entity("ASP.NET_Classwork.Data.Entities.Token", b =>
@@ -141,7 +141,7 @@ namespace ASP.NET_Classwork.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tokens");
+                    b.ToTable("Tokens", (string)null);
                 });
 
             modelBuilder.Entity("ASP.NET_Classwork.Data.Entities.User", b =>
@@ -187,7 +187,7 @@ namespace ASP.NET_Classwork.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("ASP.NET_Classwork.Data.Entities.Feedback", b =>

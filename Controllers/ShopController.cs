@@ -13,7 +13,7 @@ namespace ASP.NET_Classwork.Controllers
         {
             ShopPageModel model = new()
             {
-                ProductGroups = _dataContext.Groups.Where(g => g.DeleteDt == null)
+                ProductGroups = _dataContext.Groups.Include(g => g.Products).Where(g => g.DeleteDt == null)
             };
             return View(model);
         }
@@ -21,7 +21,7 @@ namespace ASP.NET_Classwork.Controllers
         public IActionResult Group(String id)
         {
             ProductGroup? group = null;
-            var source = _dataContext.Groups.Include(g => g.Products).Where(g => g.DeleteDt == null);
+            var source = _dataContext.Groups.Include(g => g.Products).ThenInclude(p => p.Feedbacks).Where(g => g.DeleteDt == null);
             group = source.FirstOrDefault(g => g.Slug == id);
             if (group == null)
             {
@@ -47,7 +47,14 @@ namespace ASP.NET_Classwork.Controllers
         public IActionResult Product(String id)
         {
             Product? product = null;
-            var source = _dataContext.Products.Where(p => p.DeleteDt == null).Include(p => p.Group).ThenInclude(g => g.Products);
+            var source = _dataContext
+                .Products
+                .Where(p => p.DeleteDt == null)
+                .Include(p => p.Feedbacks)
+                .ThenInclude(f => f.User)
+                .Include(p => p.Group)
+                .ThenInclude(g => g.Products);
+
             product = source.FirstOrDefault(p => p.Slug == id);
 
             if (product == null)
@@ -63,7 +70,7 @@ namespace ASP.NET_Classwork.Controllers
             ShopProductPageModel model = new() 
             { 
                 Product = product,
-                ProductGroup = product.Group
+                ProductGroup = product.Group,
             };
             return View(model);
         }
