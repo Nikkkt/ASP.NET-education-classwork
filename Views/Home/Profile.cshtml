@@ -1,4 +1,7 @@
 ﻿@using System.Security.Claims
+
+@model ASP.NET_Classwork.Models.Home.ProfilePageModel
+
 @{
     ViewData["Title"] = "Profile";
     bool isAuthenticated = Context.User.Identity?.IsAuthenticated ?? false;
@@ -13,10 +16,23 @@
     String? registered = Context.User.Claims.FirstOrDefault(c => c.Type == "User::Registered")?.Value ?? "- - -";
     String? email = Context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? "- - -";
     String? birthday = Context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.DateOfBirth)?.Value ?? "- - -";
+
+    String feedbackCreated(DateTime date)
+    {
+        if (date.Date == DateTime.Now.Date)
+        {
+            return $"Сьогодні о {date.ToShortTimeString()}";
+        }
+        else if ((DateTime.Now.Date - date.Date).Days == 1)
+        {
+            return "Вчора";
+        }
+        return date.ToLongDateString();
+    }
 }
 
 <div class="page-content page-container" id="page-content">
-    <div class="padding">
+    <div class="">
         <div class="row container d-flex justify-content-center" style="width: 1600px;">
             <div class="col-xl-12 col-md-12">
                 <div class="card user-card-full">
@@ -63,6 +79,86 @@
                                     <div class="col-sm-6">
                                         <p class="m-b-10 f-w-600">Новий пароль</p>
                                         <h6 class="text-muted f-w-400" profile-editable="newPassword">Введіть новий пароль</h6>
+                                    </div>
+                                </div>
+                                <h6 class="m-b-20 m-t-40 p-b-5 b-b-default f-w-600">Відгуки</h6>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <p class="m-b-10 f-w-600">Нещодавні</p>
+                                        @if (Model.User.Feedbacks != null)
+                                        {
+                                            foreach (var feedback in Model.User.Feedbacks.Where(f => f.DeleteDt == null))
+                                            {
+                                                <div class="profile-feedback-container">
+                                                    <div class="row">
+                                                        <div class="col col-3">
+                                                            <a asp-controller="Shop" asp-action="Product" asp-route-id="@feedback.Product!.Id" class="a-no-underline">
+                                                                <img class="feedback-product-picture" src="/Home/Download/Shop_@(feedback.Product!.Picture)" alt="Picture" />
+                                                            </a>
+                                                        </div>
+                                                        <div class="col col-9">
+                                                            <h6 class="text-muted f-w-400">
+                                                                @for (int i = 0; i < feedback.Rate; ++i)
+                                                                {
+                                                                    <span class="bi bi-star-fill" style="color: gold;"></span>
+                                                                }
+                                                                @for (int i = 0; i < 5 - feedback.Rate; ++i)
+                                                                {
+                                                                    <span class="bi bi-star" style="color: gold;"></span>
+                                                                } <br />
+                                                                @feedback.Text <br />
+                                                                @feedbackCreated(DateTime.FromBinary(feedback.Timestamp))
+                                                            </h6>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <h6 class="text-muted f-w-400">
+                                                Відгуків поки що немає
+                                            </h6>
+                                        }
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <p class="m-b-10 f-w-600">Скасовані</p>
+                                        @if (Model.User.Feedbacks != null)
+                                        {
+                                            foreach (var feedback in Model.User.Feedbacks.Where(f => f.DeleteDt != null))
+                                            {
+                                                <div class="row profile-feedback-container">
+                                                    <div class="col col-3">
+                                                        <a asp-controller="Shop" asp-action="Product" asp-route-id="@feedback.Product!.Id" class="a-no-underline">
+                                                            <img class="feedback-product-picture" src="/Home/Download/Shop_@(feedback.Product!.Picture)" alt="Picture" />
+                                                        </a>
+                                                    </div>
+                                                    <div class="col col-7">
+                                                        <h6 class="text-muted f-w-400">
+                                                            @for (int i = 0; i < feedback.Rate; ++i)
+                                                            {
+                                                                <span class="bi bi-star-fill"></span>
+                                                            }
+                                                            @for (int i = 0; i < 5 - feedback.Rate; ++i)
+                                                            {
+                                                                <span class="bi bi-star"></span>
+                                                            } <br />
+                                                            @feedback.Text <br />
+                                                            @($"{feedback.DeleteDt}")
+                                                        </h6>
+                                                    </div>
+                                                    <div class="col col-2">
+                                                        <button class="btn btn-outline-primary" data-feedback-id="@feedback.Id" data-role="feedback-recovery"><i class="bi bi-arrow-repeat"></i></button>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <h6 class="text-muted f-w-400">
+                                                Видалених відгуків поки що немає
+                                            </h6>
+                                        }
                                     </div>
                                 </div>
                                 <ul class="social-link list-unstyled m-t-40 m-b-10">

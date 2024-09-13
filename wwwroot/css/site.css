@@ -27,6 +27,17 @@ body {
   margin-bottom: 60px;
 }
 
+.feedback-product-picture {
+    width: 50px;
+}
+
+.profile-feedback-container {
+    padding: 7px 0px 0px 5px;
+    margin-top: 5px;
+    border: 2px solid lightgray;
+    border-radius: 5px;
+}
+
 .product-feedback-container {
     border: 2px solid lightgray;
     border-radius: 5px;

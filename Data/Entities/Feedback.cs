@@ -9,6 +9,8 @@
         public int Rate { get; set; } = 5;
         public long Timestamp { get; set; }
 
+        public DateTime? DeleteDt { get; set; }
+
         public Product? Product { get; set; }
         public User? User { get; set; }
     }

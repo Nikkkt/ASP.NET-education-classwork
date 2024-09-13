@@ -21,5 +21,9 @@
         //////////////////// ROLES ////////////////////
         
         public String Role { get; set; } = null!;
+
+        public IEnumerable<Feedback> Feedbacks { get; set; }
+
+        public IEnumerable<Cart> Carts { get; set; }
     }
 }

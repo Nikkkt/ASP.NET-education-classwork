@@ -84,3 +84,12 @@
 ![Homework 20](./github/23.png)
 ![Homework 20](./github/24.png)
 ![Homework 20](./github/25.png)
+
+# Homework 21
+
+![Homework 21](./github/26.png)
+![Homework 21](./github/27.png)
+
+# Homework 22
+
+![Homework 22](./github/28.png)

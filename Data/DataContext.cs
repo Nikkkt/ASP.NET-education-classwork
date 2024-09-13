@@ -9,10 +9,24 @@ namespace ASP.NET_Classwork.Data
         public DbSet<Entities.Product> Products { get; set; }
         public DbSet<Entities.ProductGroup> Groups { get; set; }
         public DbSet<Entities.Feedback> Feedbacks { get; set; }
+        public DbSet<Entities.Cart> Carts { get; set; }
+        public DbSet<Entities.CartProduct> CartProducts { get; set; }
         public DataContext(DbContextOptions options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Entities.Cart>()
+                .HasMany(c => c.CartProducts)
+                .WithOne(c => c.Cart);
+
+            modelBuilder.Entity<Entities.CartProduct>()
+                .HasOne(c => c.Product)
+                .WithMany();
+
+            modelBuilder.Entity<Entities.User>()
+                .HasMany(u => u.Carts)
+                .WithOne();
+
             modelBuilder.Entity<Entities.User>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
@@ -37,7 +51,7 @@ namespace ASP.NET_Classwork.Data
 
             modelBuilder.Entity<Entities.Feedback>()
                 .HasOne(f => f.User)
-                .WithMany();
+                .WithMany(u => u.Feedbacks);
         }
     }
 }

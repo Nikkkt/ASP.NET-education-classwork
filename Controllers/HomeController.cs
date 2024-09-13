@@ -9,8 +9,10 @@ using ASP.NET_Classwork.Services.KDF;
 using ASP.NET_Classwork.Services.OTP;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Globalization;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
@@ -59,7 +61,15 @@ namespace ASP.NET_Classwork.Controllers
         {
             if (HttpContext.User.Identity?.IsAuthenticated ?? false)
             {
-                return View();
+                String sid = HttpContext.User.Claims.First(c => c.Type == ClaimTypes.Sid).Value;
+                return View(new ProfilePageModel()
+                {
+                    User = _dataContext
+                    .Users
+                    .Include(u => u.Feedbacks)
+                    .ThenInclude(f => f.Product)
+                    .First(u => u.Id.ToString() == sid)
+                });
             }
             return RedirectToAction(nameof(this.Index));
         }

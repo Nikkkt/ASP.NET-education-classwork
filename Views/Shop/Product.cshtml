@@ -5,8 +5,8 @@
     bool isAuthenticated = Context.User.Identity?.IsAuthenticated ?? false;
     String? userId = Context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid)?.Value;
     int avgFeedback = 0;
-    int sum = 0;
-    int amount = 0;
+    double sum = 0;
+    double amount = 0;
 
     foreach (var feedback in Model.Product.Feedbacks)
     {
@@ -15,7 +15,7 @@
     }
 
     if (amount == 0) avgFeedback = 0;
-    else avgFeedback = sum / amount;
+    else avgFeedback = (int)Math.Round(sum / amount);
 }
 
 <div class="row">
@@ -36,7 +36,7 @@
                 <span class="bi bi-star" style="color: gold;"></span>
             }
         </h5>
-        <button class="btn btn-outline-success"><i class="bi bi-cart3"></i> До кошику</button>
+        <button class="btn btn-outline-success" data-product-id="@Model.Product.Id" data-user-id="@userId" data-role="add-to-cart"><i class="bi bi-cart3"></i> До кошику</button>
 
         <div class="row">
             <b>Відгуки про товар:</b>
@@ -49,21 +49,32 @@
                 <div class="product-feedback-container">
                     @foreach (var feedback in Model.Product.Feedbacks)
                     {
-                        String myClass = isAuthenticated && feedback.User?.Id.ToString() == userId ? "my-product-feedback" : String.Empty;
+                        bool isMine = isAuthenticated && feedback.User?.Id.ToString() == userId;
+                        String myClass = isMine ? "my-product-feedback" : String.Empty;
 
                         <div class="product-feedback @myClass">
                             <b>@(feedback.User?.Name ?? "Анонімно")</b>
                             <i>@DateTime.FromBinary(feedback.Timestamp).ToShortDateString()</i>
-                            <p>@feedback.Text</p>
-
-                            @for (int i = 0; i < feedback.Rate; ++i)
-                            {
-                                <span class="bi bi-star-fill"></span>
-                            }
-                            @for (int i = 0; i < 5 - feedback.Rate; ++i)
-                            {
-                                <span class="bi bi-star"></span>
-                            }
+                            <p data-feedback-id="@feedback.Id" data-role="feedback-text">@feedback.Text</p>
+                            <div class="d-flex justify-content-between">
+                                <div data-feedback-id="@feedback.Id" data-role="feedback-rate" data-value="@feedback.Rate">
+                                    @for (int i = 0; i < feedback.Rate; ++i)
+                                    {
+                                        <span class="bi bi-star-fill"></span>
+                                    }
+                                    @for (int i = 0; i < 5 - feedback.Rate; ++i)
+                                    {
+                                        <span class="bi bi-star"></span>
+                                    }
+                                </div>
+                                @if (isMine)
+                                {
+                                    <div>
+                                        <button class="btn btn-outline-warning" data-feedback-id="@feedback.Id" data-role="feedback-edit"><i class="bi bi-pencil-square"></i></button>
+                                        <button class="btn btn-outline-danger" data-feedback-id="@feedback.Id" data-role="feedback-delete"><i class="bi bi-x-square"></i></button>
+                                    </div>
+                                }
+                            </div>
                         </div>
                     }
                 </div>
@@ -76,7 +87,7 @@
             @if (isAuthenticated)
             {
                 <div class="product-feedback-add-container">
-                    <b>Додати відгук:</b>
+                    <b id="product-feedback-title">Додати відгук:</b>
                     <input class="form-control" type="number" id="product-feedback-rate" value="5" min="1" max="5" />
                     <textarea class="form-control" id="product-feedback" data-user-id="@userId" data-timestamp="@DateTime.Now.Ticks" data-product-id="@Model.Product.Id"></textarea><br />
                     <button id="product-feedback-button" class="btn btn-outline-info">Надіслати</button>
