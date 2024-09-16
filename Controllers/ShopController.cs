@@ -75,5 +75,10 @@ namespace ASP.NET_Classwork.Controllers
             };
             return View(model);
         }
+
+        public IActionResult Cart()
+        {
+            return View();
+        }
     }
 }

@@ -27,6 +27,15 @@ body {
   margin-bottom: 60px;
 }
 
+.cart-product-item {
+    border: 2px solid lightgray;
+    width: 80%;
+}
+
+.cart-product-item img {
+    width: 100%;
+}
+
 .feedback-product-picture {
     width: 50px;
 }

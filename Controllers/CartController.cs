@@ -1,8 +1,10 @@
 ﻿using ASP.NET_Classwork.Data;
+using ASP.NET_Classwork.Data.Entities;
 using ASP.NET_Classwork.Models.Api;
 using ASP.NET_Classwork.Models.Cart;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ASP.NET_Classwork.Controllers
 {
@@ -79,6 +81,29 @@ namespace ASP.NET_Classwork.Controllers
 
             await _dataContext.SaveChangesAsync();
             response.Data = "Added";
+
+            return response;
+        }
+
+        [HttpGet]
+        public RestResponse<Cart?> DoGet([FromQuery] String id)
+        {
+            RestResponse<Cart?> response = new()
+            {
+                Meta = new()
+                {
+                    Service = "Cart"
+                },
+                Data = _dataContext
+                        .Carts
+                        .Include(c => c.CartProducts)
+                        .ThenInclude(cp => cp.Product)
+                        .FirstOrDefault(
+                            c => c.UserId.ToString() == id && 
+                            c.CloseDt == null && 
+                            c.DeleteDt == null
+                        )
+            };
 
             return response;
         }

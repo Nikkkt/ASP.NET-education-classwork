@@ -1,0 +1,20 @@
+﻿@using System.Security.Claims
+@{
+    bool isAuthenticated = Context.User.Identity?.IsAuthenticated ?? false;
+    String? userId = Context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid)?.Value;
+}
+
+@if (isAuthenticated)
+{
+    <div class="text-center">
+        <h1>Ваш кошик</h1>
+    </div>
+
+    <div id="cart-container" data-user-id="@userId"></div>
+
+    <script src="~/js/cart.js"></script>
+}
+else
+{
+    <h1>Кошик доступний після входу в систему</h1>
+}

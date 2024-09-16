@@ -90,7 +90,13 @@ function addToCartClick(e) {
             productId,
             count: 1
         })
-    }).then(r => r.json()).then(console.log)
+    }).then(r => r.json()).then(j => {
+        if (j.data === "Added") {
+            alert("Товар додано")
+        } else {
+            alert("Щось пішло не так")
+        }
+    })
 
     console.log(userId, productId)
 }

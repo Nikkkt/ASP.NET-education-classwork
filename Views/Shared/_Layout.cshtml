@@ -54,13 +54,16 @@
                         <button id="log-out-button" type="button" class="btn btn-outline-secondary mx-2">
                             <i class="bi bi-box-arrow-left"></i>
                         </button>
+                        <a asp-controller="Shop" asp-action="Cart" class="btn btn-outline-secondary a-no-underline">
+                            <i class="bi bi-cart3"></i>
+                        </a>
                     }
                     else
                     {
                         <button type="button" class="btn btn-outline-secondary mx-2" data-bs-toggle="modal" data-bs-target="#authModal">
                             <i class="bi bi-box-arrow-in-right"></i>
                         </button>
-                        <a class="btn btn-outline-secondary" asp-area="" asp-controller="Home" asp-action="SignUp"><i class="bi bi-person-circle"></i></a>
+                        <a class="btn btn-outline-secondary a-no-underline" asp-area="" asp-controller="Home" asp-action="SignUp"><i class="bi bi-person-circle"></i></a>
                     }
                 </div>
             </div>
