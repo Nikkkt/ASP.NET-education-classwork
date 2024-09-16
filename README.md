@@ -101,3 +101,8 @@
 # Homework 24
 
 ![Homework 24](./github/30.png)
+
+# Homework 25
+
+![Homework 25](./github/31.png)
+![Homework 25](./github/32.png)

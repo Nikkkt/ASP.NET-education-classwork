@@ -56,7 +56,7 @@ function loadCart() {
                 if (totalCount > 0) {
                     html += `
                     <div class="d-flex align-items-center justify-content-center my-2">
-                        <b>Всього: <span data-role="cart-total">${total}</span> грн</b>
+                        <b>Всього <span data-role="cart-total-count">${totalCount}</span> товари(ів) на суму <span data-role="cart-total">${total}</span> грн</b>
                     </div>
                 `
                 }
@@ -69,10 +69,15 @@ function loadCart() {
 
 function updateTotal() {
     let total = 0
+    let totalCount = 0
     for (let s of document.querySelectorAll('[data-role="cart-product-sum"]')) {
         total += Number(s.innerHTML)
     }
+    for (let c of document.querySelectorAll('[data-role="cart-product-count"]')) {
+        totalCount += Number(c.innerHTML)
+    }
     document.querySelector('[data-role="cart-total"]').innerHTML = total
+    document.querySelector('[data-role="cart-total-count"]').innerHTML = totalCount
 }
 
 function decrementClick(e) {
