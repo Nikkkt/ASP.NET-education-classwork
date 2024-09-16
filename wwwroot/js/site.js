@@ -92,7 +92,7 @@ function addToCartClick(e) {
         })
     }).then(r => r.json()).then(j => {
         if (j.data === "Added") {
-            alert("Товар додано")
+            alert(`Товар додано успішно, у кошику ${j.meta.count} шт обраних вами товарів`)
         } else {
             alert("Щось пішло не так")
         }

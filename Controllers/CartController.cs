@@ -72,14 +72,17 @@ namespace ASP.NET_Classwork.Controllers
                         ProductId = formModel.ProductId,
                         Count = formModel.Count,
                     });
+                    response.Meta.Count = 1;
                 }
                 else
                 {
                     cartProduct.Count += formModel.Count;
+                    response.Meta.Count = cartProduct.Count;
                 }
             }
 
             await _dataContext.SaveChangesAsync();
+            
             response.Data = "Added";
 
             return response;
@@ -105,6 +108,63 @@ namespace ASP.NET_Classwork.Controllers
                         )
             };
 
+            return response;
+        }
+
+        [HttpPut]
+        public async Task<RestResponse<String>> DoPut([FromQuery] Guid cpId, [FromQuery] int increment)
+        {
+            RestResponse<String> response = new()
+            {
+                Meta = new()
+                {
+                    Service = "Cart"
+                },
+            };
+
+            if (cpId == default)
+            {
+                response.Data = "Error 400: cpId is not valid";
+                return response;
+            }
+            if (increment == 0)
+            {
+                response.Data = "Error 400: increment is not valid";
+                return response;
+            }
+
+            var cp = _dataContext.CartProducts.Include(cp => cp.Cart).FirstOrDefault(cp => cp.Id == cpId);
+
+            if (cp == null)
+            {
+                response.Data = "Error 404: cpId does not identify entity";
+                return response;
+            }
+            if (cp.Cart.CloseDt is not null || cp.Cart.DeleteDt is not null)
+            {
+                response.Data = "Error 409: cpId identifies not active entity";
+                return response;
+            }
+            if (cp.Count + increment < 0)
+            {
+                response.Data = "Error 422: increment could not be applied";
+                return response;
+            }
+
+            if (cp.Count + increment == 0)
+            {
+                _dataContext.CartProducts.Remove(cp);
+                response.Meta.Count = 0;
+            }
+            else
+            {
+                cp.Count += increment;
+                response.Meta.Count = cp.Count;
+            }
+
+            await _dataContext.SaveChangesAsync();
+            response.Data = "Updated";
+            
             return response;
         }
     }

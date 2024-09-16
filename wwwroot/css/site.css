@@ -431,11 +431,15 @@ h6 {
     display: inline-block;
     width: 250px;
     margin: 50px 5px 5px 5px;
-    height: 475px;
+    height: 525px;
     border: 2px solid lightgray;
     transition: border-color 0.3s ease;
     border-radius: 5px;
     vertical-align: top;
+}
+
+.item-product-card button {
+    margin-left: 15px;
 }
 
 .item-product-card:hover {

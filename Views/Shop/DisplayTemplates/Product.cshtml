@@ -1,4 +1,6 @@
-﻿@model ASP.NET_Classwork.Data.Entities.Product
+﻿@using System.Security.Claims
+
+@model ASP.NET_Classwork.Data.Entities.Product
 
 @{
     int feedbacksAmount = Model.Feedbacks.Count();
@@ -14,6 +16,8 @@
 
     if (amount == 0) avgFeedback = 0;
     else avgFeedback = sum / amount;
+
+    String? userId = Context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid)?.Value;
 }
 
 <div class="item-product-card">
@@ -46,4 +50,5 @@
             </h6>
         </div>
     </a>
+    <button class="btn btn-outline-success" data-product-id="@Model.Id" data-user-id="@userId" data-role="add-to-cart"><i class="bi bi-cart3"></i> До кошику</button>
 </div>
