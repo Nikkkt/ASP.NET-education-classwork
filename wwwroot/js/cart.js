@@ -12,22 +12,18 @@ function loadCart() {
     fetch("/api/cart?id=" + userId)
         .then(r => r.json())
         .then(j => {
-            let html = "";
+            html = `
+            <div class="row mx-5">
+                <div class="col col-sm-12 col-lg-10 col-xl-8">
+            `
+            let totalCount = 0
             if (j.data == null || j.data.cartProducts.length == 0) {
-                html = "Кошик порожній";
-            }
-            else {
+                html = "Кошик порожній"
+            } else {
                 let total = 0
-                let totalCount = 0
-
-                html = `
-                <div class="row mx-5">
-                    <div class="col col-8">
-                `
                 for (let cartProduct of j.data.cartProducts) {
-                    
                     html += `
-                    <div class="row my-2 cart-product-item" data-cp-id="${cartProduct.id}">
+                    <div data-cart-id="${j.data.id}" class="row my-2 cart-product-item" data-cp-id="${cartProduct.id}">
                         <div class="col col-2">
                             <a href="/Shop/Product/${cartProduct.product.slug ?? cartProduct.product.id}" class="a-no-underline">
                                 <img src="/Home/Download/Shop_${cartProduct.product.picture}" alt="Picture"/>
@@ -55,16 +51,44 @@ function loadCart() {
 
                 if (totalCount > 0) {
                     html += `
-                    <div class="d-flex align-items-center justify-content-center my-2">
-                        <b>Всього <span data-role="cart-total-count">${totalCount}</span> товари(ів) на суму <span data-role="cart-total">${total}</span> грн</b>
-                    </div>
-                `
+                        <div class="d-flex align-items-center justify-content-center my-2">
+                            <b>Всього <span data-role="cart-total-count">${totalCount}</span> товари(ів) на суму <span data-role="cart-total">${total}</span> грн</b>
+                        </div>
+                    `
                 }
-
-                html += '</div></div>'
             }
+
+            html += `
+            <div class="d-flex justify-content-left">
+                <a href="/Shop/Index" class="btn btn-info" style="margin-right: 10px;">До магазину</a>
+                ${totalCount > 0 ? '<button onclick="buyClick()" class="btn btn-success">Перейти до оплати</button>' : ''}
+            </div>
+            `
+
+            html += '</div></div>'
+
             container.innerHTML = html;
         });
+}
+
+function buyClick() {
+    const block = document.querySelector('[data-cart-id]')
+    const cartId = block.getAttribute('data-cart-id')
+    const total = document.querySelector('[data-role="cart-total"]').innerText
+
+    if (confirm("Чи підтверджуєте ви покупку на суму " + total)) {
+        console.log(cartId)
+        fetch("/api/cart?cartId=" + cartId, {
+            method: "DELETE"
+        }).then(r => r.json()).then(j => {
+            console.log(j)
+            if (j.data == "Deleted") {
+                loadCart()
+            } else {
+                alert(j.data)
+            }
+        })
+    }
 }
 
 function updateTotal() {

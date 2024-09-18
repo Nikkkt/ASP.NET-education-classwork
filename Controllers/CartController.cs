@@ -167,5 +167,40 @@ namespace ASP.NET_Classwork.Controllers
             
             return response;
         }
+
+        [HttpDelete]
+        public async Task<RestResponse<String>> DoDelete([FromQuery] Guid cartId)
+        {
+            RestResponse<String> response = new()
+            {
+                Meta = new()
+                {
+                    Service = "Cart"
+                },
+            };
+
+            if (cartId == default)
+            {
+                response.Data = "Error 400: cartId is not valid";
+                return response;
+            }
+
+            var cart = _dataContext.Carts.FirstOrDefault(c => c.Id == cartId);
+            if (cart == null) 
+            { 
+                response.Data = "Error 404: cartId is not found"; 
+                return response; 
+            }
+            if (cart.CloseDt != null || cart.DeleteDt != null)
+            {
+                response.Data = "Error 409: cartId identify closed or deleted cart";
+                return response;
+            }
+
+            cart.CloseDt = DateTime.Now;
+            await _dataContext.SaveChangesAsync();
+            response.Data = "Deleted";
+            return response;
+        }
     }
 }
